@@ -34,43 +34,62 @@ function shuffle (src) {
  * YOUR CODE BELOW
  **********************************************/
 
+
+function randomNum(min, max) {
+  return Math.floor(Math.random() * (max - min + 1) + min)
+}
+
 function App () {
-  const words = ['kitties', 'rather', 'player', 'rowdy', 'estimate', 'monkey', 'lunge', 'conceive', 'feather', 'sacred', 'summit', 'colleague',]
+  let words = ['kitties', 'rather', 'player', 'rowdy', 'estimate', 'monkey', 'lunge', 'conceive', 'feather', 'sacred', 'summit', 'colleague']
 
-  // const [points, setPoints] = React.useState(localStorage.getItem('points') != 'null' && localStorage.getItem('points'), 0)
-  // const [strikes, setStrikes] = React.useState(localStorage.getItem('strikes') != 'null' && localStorage.getItem('strikes'), 0)
-  // const [passes, setPasses] = React.useState(localStorage.getItem('passes') != 'null' && localStorage.getItem('passes'), 3)
+  if (localStorage.getItem('words') != null) {
+    words = JSON.parse(localStorage.getItem('words'))
+  }
 
-  const [points, setPoints] = React.useState(0)
-  const [strikes, setStrikes] = React.useState(0)
-  const [passes, setPasses] = React.useState(3)
+  const [number, setNumber] = React.useState(localStorage.getItem('number') != null && Number(localStorage.getItem('number')), randomNum(0, (words.length - 1)))
+  const [word, setWord] = React.useState(localStorage.getItem('word') != null && localStorage.getItem('word'), words[number])
+  const [points, setPoints] = React.useState(localStorage.getItem('points') != null && Number(localStorage.getItem('points')), 0)
+  const [strikes, setStrikes] = React.useState(localStorage.getItem('strikes') != null && Number(localStorage.getItem('strikes')), 0)
+  const [passes, setPasses] = React.useState(localStorage.getItem('passes') != null && Number(localStorage.getItem('passes')), 3)
 
-  let array = shuffle(words)
-  let word = shuffle(array[0])
-  console.log(array[0])
+  // const [number, setNumber] = React.useState(randomNum(0, (words.length-1)))
+  // const [word, setWord] = React.useState(words[number])
+  // const [points, setPoints] = React.useState(0)
+  // const [strikes, setStrikes] = React.useState(0)
+  // const [passes, setPasses] = React.useState(3)
 
-  // if (localStorage.getItem('word') != 'null') {
-  //   word = localStorage.getItem('word')
-  // }
+  words.splice(number, 1)
+
+  console.log(number)
+  console.log(word)
+  console.log(words)
 
   function btn(e) {
     e.preventDefault()
     setPasses(passes-1)
+    setNumber(randomNum(0, (words.length-1)))
+    setWord(words[number])
   }
   function txt(e) {
     if (e.key == 'Enter') {
       e.preventDefault()
-      if (e.target.value == array[0]) {
+      if (e.target.value == word) {
+        setNumber(randomNum(0, (words.length-1)))
         setPoints(points+1)
-        word = shuffle(array[0])
+        setWord(words[number])
       } else {
         setStrikes(strikes+1)
       }
-      console.log(strikes)
-      console.log(points)
     }
   }
- 
+  function reset(e) {
+    e.preventDefault()
+    localStorage.clear()
+  }
+
+  localStorage.setItem('number', number)
+  localStorage.setItem('word', word)
+  localStorage.setItem('words', JSON.stringify(words))
   localStorage.setItem('points', points)
   localStorage.setItem('strikes', strikes)
   localStorage.setItem('passes', passes)
@@ -87,11 +106,16 @@ function App () {
       <p>{strikes}</p>
       <p>Strikes</p>
     </div>
+    {strikes < 12 && words.length > 0 && 
     <form id="scramble">
-      <label htmlFor="input">{word}</label>
+      <label htmlFor="input">{shuffle(word)}</label>
       <input type="text" id="input" onKeyPress={txt}></input>
       {passes > 0 && <button type="button" id="pass" onClick={btn}>{passes} Passes Remaining</button>}
     </form>
+    }
+    {strikes == 12 || words.length == 0 &&
+      <button type="button" id="reset" onClick={reset}></button>
+    }
     </React.Fragment>
   )
 }
