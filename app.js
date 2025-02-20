@@ -99,6 +99,7 @@ function App () {
   return (
     <React.Fragment>
       <h1>Welcome to Scramble</h1>
+      <div id="info">
     <div id="points">
       <p>{points}</p>
       <p>Points</p>
@@ -106,6 +107,7 @@ function App () {
     <div id="strikes">
       <p>{strikes}</p>
       <p>Strikes</p>
+    </div>
     </div>
     {((strikes+points+pc < 12)) && 
     <form id="scramble">
